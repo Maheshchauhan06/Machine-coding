@@ -40,11 +40,11 @@ const Passwordgenrator = () => {
     specialChar: false,
   });
 
-  const handleOnChange = (e: any) => {
-    let { name, vlaue } = e.target;
-    setaddInPassword((pre) => ({
-      ...pre,
-      [name]: !pre[name],
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name } = e.target;
+    setaddInPassword((prev) => ({
+      ...prev,
+      [name as keyof passwordTyps]: !prev[name as keyof passwordTyps],
     }));
   };
 
@@ -60,7 +60,7 @@ const Passwordgenrator = () => {
     if (addInPassword.number) charPool += number;
     if (addInPassword.specialChar) charPool += specialChar;
 
-    if (charPool.length === 0) alert("Please select Passowrd Type");
+    if (charPool.length === 0) return alert("Please select Passowrd Type");
 
     let tempPassword = "";
     for (let i = 0; i < passwordLength; i++) {
@@ -84,7 +84,7 @@ const Passwordgenrator = () => {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(passWord);
-    alert("coped");
+    alert("Password copied");
   };
 
   return (
@@ -93,15 +93,7 @@ const Passwordgenrator = () => {
         <div className="password_display">
           <label className="password_label">
             Password:
-            <p
-              className="generated_password"
-              onCopy={(e) => {
-                navigator.clipboard.writeText("fuck you bro");
-              }}
-            >
-              {" "}
-              {passWord || "password"}{" "}
-            </p>
+            <p className="generated_password"> {passWord || "password"} </p>
           </label>
         </div>
         <button
@@ -112,6 +104,7 @@ const Passwordgenrator = () => {
           Copy
         </button>
       </div>
+
       {passwordStrength && (
         <p
           className={`strength_label ${
@@ -139,21 +132,18 @@ const Passwordgenrator = () => {
       </label>
 
       <div className="checkbox_section">
-        {checkBoxInputObj?.map((labels, index) => {
-          return (
-            <label key={index} className="checkbox_label">
-              <input
-                value={addInPassword[labels.type]}
-                type="checkbox"
-                className="checkbox_input"
-                checked={addInPassword[labels.type]}
-                onChange={handleOnChange}
-                name={labels.type}
-              />
-              {labels.lable}
-            </label>
-          );
-        })}
+        {checkBoxInputObj.map((labels, index) => (
+          <label key={index} className="checkbox_label">
+            <input
+              type="checkbox"
+              className="checkbox_input"
+              checked={addInPassword[labels.type as keyof passwordTyps]}
+              onChange={handleOnChange}
+              name={labels.type}
+            />
+            {labels.lable}
+          </label>
+        ))}
       </div>
 
       <div className="generate_btn_container">
